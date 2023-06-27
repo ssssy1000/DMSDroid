@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SESs</title>
+    <script type="text/javascript" src="utg.js"></script>
+    <script type="text/javascript" src="ses.js"></script>
+
+    <style>
+      .process-container {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        background-color: #f9f9f9;
+      }
+
+      .process-title {
+        font-weight: bold;
+      }
+
+      .process-step {
+        overflow-x: auto;
+        white-space: nowrap;
+        height: 350px;
+        margin-bottom: 5px;
+        padding: 3px;
+        border: 1px dashed #666;
+      }
+      .from-image,
+      .to-image {
+        display: inline-block;
+        max-height: 300px;
+        margin-bottom: 5px;
+      }
+      .action-image {
+        display: inline-block;
+        max-height: 50px;
+        margin-bottom: 5px;
+      }
+
+      .process-step .step-from,
+      .process-step .step-action,
+      .process-step .step-to {
+        margin-right: 10px;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>功能执行过程</h1>
+    <div id="process-container"></div>
+  </body>
+  <script>
+    var container = document.getElementById("process-container");
+    function find_img(state_id) {
+      for (var item in utg["node"]) {
+        console.log(item);
+        if (item["id"] == state_id) {
+          return item["image"];
+          break;
+        }
+      }
+      return "";
+    }
+    // 遍历ses对象
+    for (var key in ses) {
+      if (ses[key].length === 0) {
+        continue;
+      }
+      // 创建一个容器用于展示当前功能类型的执行过程
+      var processContainer = document.createElement("div");
+      processContainer.classList.add("process-container");
+
+      // 创建标题元素，显示功能类型
+      var title = document.createElement("h2");
+      title.classList.add("process-title");
+      title.textContent = key;
+      processContainer.appendChild(title);
+
+      // 遍历当前功能类型的执行过程
+      for (let i = 0; i < ses[key].length; i++) {
+        var step = ses[key][i];
+
+        // 创建步骤元素，显示执行过程中的from、action和to
+        var stepElement = document.createElement("div");
+        stepElement.classList.add("process-step");
+
+        var FromImage = document.createElement("img");
+        FromImage.classList.add("from-image");
+        FromImage.src = step[0].from_img;
+        FromImage.title = "state_str:" + step[0].from;
+        stepElement.appendChild(FromImage);
+
+        var ActionImage = document.createElement("img");
+        ActionImage.classList.add("action-image");
+        ActionImage.src = step[0].action_img;
+        ActionImage.title = "event_str:" + step[0].action;
+        stepElement.appendChild(ActionImage);
+
+        var ToImage = document.createElement("img");
+        ToImage.classList.add("to-image");
+        ToImage.src = step[0].to_img;
+        ToImage.title = "state_str:" + step[0].to;
+        stepElement.appendChild(ToImage);
+
+        for (let j = 1; j < step.length - 1; j++) {
+          var ActionImage = document.createElement("img");
+          ActionImage.classList.add("action-image");
+          ActionImage.src = step[j].action_img;
+          ActionImage.title = "event_str:" + step[0].action;
+          stepElement.appendChild(ActionImage);
+          var ToImage = document.createElement("img");
+          ToImage.classList.add("to-image");
+          ToImage.src = step[j].to_img;
+          ToImage.title = "state_str:" + step[0].to;
+          stepElement.appendChild(ToImage);
+        }
+        if (key != "DETAIL") {
+          var ActionImage = document.createElement("img");
+          ActionImage.classList.add("action-image");
+          ActionImage.src = step[step.length - 1].action_img;
+          ActionImage.title = "event_str:" + step[0].action;
+          stepElement.appendChild(ActionImage);
+        }
+
+        processContainer.appendChild(stepElement);
+      }
+
+      // 将当前功能类型的执行过程添加到容器中
+      container.appendChild(processContainer);
+    }
+  </script>
+</html>
