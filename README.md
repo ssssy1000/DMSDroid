@@ -1,2 +1,2 @@
 # SesDroid
-The automated test approach for Android apps
+The automated test tool for Android apps
